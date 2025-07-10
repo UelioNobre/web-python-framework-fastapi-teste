@@ -16,14 +16,14 @@ def read_root():
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
-@app.post("/study/{study_id}/attach/pdf")
+@app.post("/attach/pdf/{study}")
 async def attach_pdf(
-    study_id: str,
+    study: str,
     file: UploadFile = File(...),
     pacs: str = Form(...),
-    study: str = Form(...),
     description: str = Form(None)
 ):
+
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Somente arquivos PDF são permitidos")
 
@@ -34,13 +34,14 @@ async def attach_pdf(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    return JSONResponse(status_code=200, content={
+    output = {
         "message": "Arquivo salvo com sucesso",
         "filename": file.filename,
         "path": dest_path,
-        "study_id": study_id,
         "pacs": pacs,
         "study": study,
-        "description": description
-    })
+        "description": description,
+    }
+
+    return JSONResponse(status_code=200, content=output)
 
