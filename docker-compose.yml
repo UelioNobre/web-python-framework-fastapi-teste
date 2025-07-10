@@ -1,0 +1,28 @@
+# services:
+#   api:
+#     build: .
+#     container_name: attach_dicom_flask_api
+#     ports:
+#       - "2025:5000"
+#     volumes:
+#       - ./:/app
+#     networks:
+#       - flask_network
+#     environment:
+#       - FLASK_ENV=development
+#       - FLASK_APP=server.py
+#       - SECRET_KEY=8a1ce389c31a8f6cf4146e88ccf247eb7faea378dfe318a4ec12093139cf0e8c
+
+# networks:
+#   flask_network:
+
+# volumes:
+#   flask_data:
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
