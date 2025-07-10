@@ -1,14 +1,46 @@
+import os
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.responses import JSONResponse
+
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'dicom', 'pdf')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = FastAPI()
-
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
+
+@app.post("/study/{study_id}/attach/pdf")
+async def attach_pdf(
+    study_id: str,
+    file: UploadFile = File(...),
+    pacs: str = Form(...),
+    study: str = Form(...),
+    description: str = Form(None)
+):
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Somente arquivos PDF são permitidos")
+
+    try:
+        dest_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        with open(dest_path, "wb") as f:
+            f.write(await file.read())
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return JSONResponse(status_code=200, content={
+        "message": "Arquivo salvo com sucesso",
+        "filename": file.filename,
+        "path": dest_path,
+        "study_id": study_id,
+        "pacs": pacs,
+        "study": study,
+        "description": description
+    })
+
