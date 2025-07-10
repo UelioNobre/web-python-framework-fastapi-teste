@@ -3,7 +3,7 @@ from typing import Union
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'dicom', 'pdf')
+UPLOAD_FOLDER = os.path.join('/', 'mnt', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = FastAPI()
@@ -44,4 +44,3 @@ async def attach_pdf(
     }
 
     return JSONResponse(status_code=200, content=output)
-
