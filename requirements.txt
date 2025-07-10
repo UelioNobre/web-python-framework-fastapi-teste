@@ -1,2 +1,5 @@
 fastapi==0.95.1 
+pillow==11.2.1
+pydicom==2.4.4
+pynetdicom==2.1.1
 uvicorn==0.22.0
